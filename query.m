@@ -1,0 +1,27 @@
+let
+    Source = Csv.Document(File.Contents("C:\Users\letii\Documents\FormacaoCD\9.Prática em R\dados\Churn.csv"),[Delimiter=";", Columns=12, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"X0", Int64.Type}, {"X1", Int64.Type}, {"X2", type text}, {"X3", type text}, {"X4", Int64.Type}, {"X4_1", Int64.Type}, {"X6", Int64.Type}, {"X7", Int64.Type}, {"X8", Int64.Type}, {"X9", Int64.Type}, {"X10", Int64.Type}, {"X11", Int64.Type}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"X0", "Id"}, {"X1", "Score"}, {"X2", "Estado"}, {"X3", "Genero"}, {"X4", "Idade"}, {"X4_1", "Patrimonio"}, {"X6", "Saldo"}, {"X7", "Produtos"}, {"X8", "TemCartaoCredito"}, {"X9", "Ativo"}, {"X10", "Salario"}, {"X11", "Saiu"}}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Renamed Columns",{{"Saiu", type logical}, {"Ativo", type logical}, {"TemCartaoCredito", type logical}}),
+    #"Replaced Value" = Table.ReplaceValue(#"Changed Type1","M","Masculino",Replacer.ReplaceValue,{"Genero"}),
+    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","F","Feminino",Replacer.ReplaceValue,{"Genero"}),
+    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","Fem","Feminino",Replacer.ReplaceValue,{"Genero"}),
+    #"Filtered Rows" = Table.SelectRows(#"Replaced Value2", each [Genero] <> null and [Genero] <> ""),
+    #"Removed Duplicates" = Table.Distinct(#"Filtered Rows", {"Id"}),
+    #"Filtered Rows1" = Table.SelectRows(#"Removed Duplicates", each [Id] <> null and [Id] <> ""),
+    #"Filtered Rows2" = Table.SelectRows(#"Filtered Rows1", each [Score] <> null and [Score] <> ""),
+    #"Filtered Rows3" = Table.SelectRows(#"Filtered Rows2", each [Estado] <> null and [Estado] <> ""),
+    #"Filtered Rows4" = Table.SelectRows(#"Filtered Rows3", each [Idade] <> null and [Idade] <> ""),
+    #"Filtered Rows5" = Table.SelectRows(#"Filtered Rows4", each [Patrimonio] <> null and [Patrimonio] <> ""),
+    #"Filtered Rows6" = Table.SelectRows(#"Filtered Rows5", each [Saldo] <> null and [Saldo] <> ""),
+    #"Filtered Rows7" = Table.SelectRows(#"Filtered Rows6", each [Produtos] <> null and [Produtos] <> ""),
+    #"Filtered Rows8" = Table.SelectRows(#"Filtered Rows7", each [TemCartaoCredito] <> null and [TemCartaoCredito] <> ""),
+    #"Filtered Rows9" = Table.SelectRows(#"Filtered Rows8", each [Ativo] <> null and [Ativo] <> ""),
+    #"Filtered Rows10" = Table.SelectRows(#"Filtered Rows9", each [Salario] <> null and [Salario] <> ""),
+    #"Filtered Rows11" = Table.SelectRows(#"Filtered Rows10", each [Saiu] <> null and [Saiu] <> ""),
+    #"Filtered Rows12" = Table.SelectRows(#"Filtered Rows11", each [Estado] = "PR" or [Estado] = "RS" or [Estado] = "SC"),
+    #"Filtered Rows13" = Table.SelectRows(#"Filtered Rows12", each [Idade] >= 18 and [Idade] <= 115),
+    #"Filtered Rows14" = Table.SelectRows(#"Filtered Rows13", each [Patrimonio] >= 0)
+in
+    #"Filtered Rows14"
