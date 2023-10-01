@@ -1,5 +1,5 @@
 let
-    Source = Csv.Document(File.Contents("C:\Users\letii\Documents\FormacaoCD\9.Prática em R\dados\Churn.csv"),[Delimiter=";", Columns=12, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+    Source = Csv.Document(File.Contents(filesource),[Delimiter=";", Columns=12, Encoding=1252, QuoteStyle=QuoteStyle.None]),
     #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
     #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"X0", Int64.Type}, {"X1", Int64.Type}, {"X2", type text}, {"X3", type text}, {"X4", Int64.Type}, {"X4_1", Int64.Type}, {"X6", Int64.Type}, {"X7", Int64.Type}, {"X8", Int64.Type}, {"X9", Int64.Type}, {"X10", Int64.Type}, {"X11", Int64.Type}}),
     #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"X0", "Id"}, {"X1", "Score"}, {"X2", "Estado"}, {"X3", "Genero"}, {"X4", "Idade"}, {"X4_1", "Patrimonio"}, {"X6", "Saldo"}, {"X7", "Produtos"}, {"X8", "TemCartaoCredito"}, {"X9", "Ativo"}, {"X10", "Salario"}, {"X11", "Saiu"}}),
